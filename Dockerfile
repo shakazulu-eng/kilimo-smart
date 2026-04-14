@@ -1,34 +1,35 @@
 FROM php:8.2-apache
 
-# Install system dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    zip \
-    unzip \
-    git \
-    curl
+    zip unzip git curl \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
-
-# Get Composer
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /var/www
 
-# Copy project files
+# Copy files
 COPY . .
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader
+# 🔥 IMPORTANT: Create .env first
+RUN cp .env.example .env
 
-# Set permissions
+# 🔥 IMPORTANT: Install without scripts (avoid artisan crash)
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+# Generate app key
+RUN php artisan key:generate
+
+# Now run scripts manually
+RUN php artisan package:discover
+
+# Permissions
 RUN chown -R www-data:www-data /var/www
 
-# Expose port
 EXPOSE 80
-
 CMD ["apache2-foreground"]
