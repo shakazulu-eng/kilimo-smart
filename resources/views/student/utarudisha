@@ -1,0 +1,12 @@
+<div class="output">
+            <h3>Matokeo ya Hali ya Hewa</h3>
+            <p><strong>Joto:</strong> {{ $data['main']['temp'] }} °C</p>
+            <p><strong>Hali:</strong> {{ $data['weather'][0]['description'] }}</p>
+            <p><strong>Unyevu:</strong> {{ $data['main']['humidity'] }}%</p>
+            <p><strong>Upepo:</strong> {{ $data['wind']['speed'] }} m/s</p>
+              
+            <div class="alert alert-info">
+                <strong>Ushauri wa Kilimo:</strong><br>
+                {{ $advice }}
+            </div>
+        </div> 

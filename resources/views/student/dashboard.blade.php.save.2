@@ -1,0 +1,23 @@
+@extends('layouts.farmer')
+
+@section('title','Farmer Dashboard')
+
+@section('content')
+
+<h2>Quick Actions</h2>
+
+<ul>
+    <li><a href="#">Weather Alerts</a></li>
+    <li><a href="#">Weather history & reports</a></<li>
+    <a href="{{ route('student.crop.advice') }}">Advice</a>
+</li>
+
+    <li><a href="secure">Add Comment</a></li>
+</ul>
+
+<form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit">Logout</button>
+</form>
+
+@endsection

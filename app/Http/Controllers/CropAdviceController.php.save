@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class CropAdviceController extends Controller
+{
+    public function getAdvice(Request $request)
+    {
+        $crop = $request->crop;
+
+        // SAMPLE weather (baadaye utaunganisha OpenWeather)
+        $weather = [
+            'temp' => 30,
+            'rain' => 8,
+            'humidity' => 65
+        ];
+
+        $advice = $this->cropLogic($crop, $weather);
+
+        return view('crop-advice.result', compact('advice', 'weather', 'crop'));
+    }
+
+    private function cropLogic($crop, $weather)
+    {
+        $temp = $weather['temp'];
+        $rain = $weather['rain'];
+        $humidity = $weather['humidity'];
+
+        if ($crop == 'maize') {
+            if ($temp > 32) {
+                return "⚠️ Joto ni kali sana kwa mahindi. Ongeza umwagiliaji.";
+            } elseif ($rain < 5) {
+                return "🚿 Mvua ni kidogo. Inashauriwa kumwagilia mahindi.";
+            }
+            return "✅ Hali ya hewa ni nzuri kwa mahindi.";
+        }
+
+        if ($crop == 'rice') {
+            if ($rain < 10) {
+                return "⚠️ Mpunga unahitaji maji zaidi.";
+            }
+            return "🌾 Hali ya hewa inafaa kwa mpunga.";
+        }
+
+        if ($crop == 'beans') {
+            if ($rain > 20) {
+                return "❌ Mvua nyingi ni hatari kwa maharage.";
+            }
+            return "✅ Hali ya hewa ni nzuri kwa maharage.";
+        }
+
+        return "⚠️ Hakuna ushauri kwa zao hilo.";
+    }
+}

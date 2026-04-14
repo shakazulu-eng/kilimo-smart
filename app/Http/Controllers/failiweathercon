@@ -1,0 +1,53 @@
+?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
+class WeatherController extends Controller
+{
+    public function index()
+    {
+        return view('student.weather');
+    }
+
+    public function search(Request $request)
+    {
+        // Validate that location is not empty
+        $request->validate([
+            'location' => 'required|string'
+        ]);
+
+        // Correct API Key access
+        $apiKey = env('WEATHER_API_KEY'); // API key properly sourced from .env
+        $response = Http::get('https://api.openweathermap.org/data/2.5/weather', [
+            'q' => $request->location,
+            'appid' => $apiKey,
+            'units' => 'metric'
+        ]);
+
+        // Check if response is successful
+        if ($response->failed()) {
+            return back()->with('error', 'Imeshindikana kupata hali ya hewa. Hakikisha mji umesahihi.');
+        }
+
+        $data = $response->json();
+
+ // Agriculture advice based on weather conditions
+        $advice = 'Hali ya hewa ni nzuri kwa shughuli za kilimo.';
+        if ($data['main']['temp'] > 30) {
+            $advice = 'Joto ni kali. Hakikisha umwagiliaji wa kutosha.';
+        } elseif ($data['weather'][0]['main'] === 'Rain') {
+            $advice = 'Mvua inanyesha. Epuka kupanda mazao yanayohitaji jua kali.';
+        }
+
+        return view('student.weather-standalone', compact('data', 'advice'));
+    }
+}
+
+
+
+
+
+

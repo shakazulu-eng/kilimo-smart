@@ -1,0 +1,64 @@
+/student/vulnerable
+      then test     <script>alert('XSS')</script>
+
+4️⃣ Login kama ADMIN
+/admin/attack-logs
+
+
+
+
+🧪 5.7: FINAL TEST (IMPORTANT)
+❌ Vulnerable page:
+/student/vulnerable
+
+
+Payload:
+
+<script>alert(1)</script>
+
+
+✔️ Alert inatokea
+✔️ Attack ina-log
+
+✅ Secure page:
+/student/secure
+
+
+Payload:
+
+<script>alert(1)</script>
+
+
+
+
+🛡️ 5.4: SQL INJECTION PREVENTION (EXPLANATION + DEMO)
+❌ VULNERABLE (USIFANYE HIVI)
+DB::select("SELECT * FROM users WHERE email = '$email'");
+
+✅ SALAMA (LARAVEL WAY)
+User::where('email', $email)->first();
+
+
+Au:
+
+DB::select('SELECT * FROM users WHERE email = ?', [$email]);
+
+
+👉 Laravel Eloquent inalinda SQL Injection automatically
+
+📌 Hii unaieleza kwenye report, sio lazima ku-implement hapa
+
+🛡️ 5.5: CSRF PROTECTION (TAYARI IMEJENGWA)
+
+Kila form:
+
+@csrf
+
+
+Bila token:
+❌ Request inakataliwa (419 error)
+
+
+
+
+
