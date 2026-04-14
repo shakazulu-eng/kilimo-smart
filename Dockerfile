@@ -1,12 +1,16 @@
 FROM php:8.2-apache
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip unzip git curl \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+    && docker-php-ext-install zip pdo pdo_mysql mbstring exif pcntl bcmath gd
+
+# Increase memory limit (VERY IMPORTANT)
+RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/memory.ini
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -16,16 +20,17 @@ WORKDIR /var/www
 # Copy files
 COPY . .
 
-# 🔥 IMPORTANT: Create .env first
+# Create env
 RUN cp .env.example .env
 
-# 🔥 IMPORTANT: Install without scripts (avoid artisan crash)
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# 🔥 IMPORTANT: allow superuser (fix nyingi za composer)
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Generate app key
+# Install dependencies (no scripts first)
+RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
+
+# Laravel setup
 RUN php artisan key:generate
-
-# Now run scripts manually
 RUN php artisan package:discover
 
 # Permissions
