@@ -15,10 +15,10 @@ RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/memory.ini
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www
+WORKDIR /var/www/html
 
 # Copy files
-COPY . .
+COPY . /var/www/html
 
 # Set Apache to serve Laravel public folder
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
