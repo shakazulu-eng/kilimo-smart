@@ -137,7 +137,7 @@ Route::get('/test-ai', [AIController::class, 'testAI']);
 
 Route::get('/make-admin', function () {
 
-    $user = User::where('email', 'WEKA_EMAIL_YAKO_HAPA')->first();
+    $user = User::where('email', 'salummuhidini749@gmail.com')->first();
 
     if (!$user) {
         return "User not found";
