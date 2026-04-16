@@ -9,6 +9,8 @@ use App\Http\Controllers\WeatherAlertController;
 use App\Services\AIService;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -134,6 +136,19 @@ Route::get('/test-ai', function (AIService $ai) {
 
 Route::get('/test-ai', [AIController::class, 'testAI']);
 
+Route::get('/create-admin', function () {
+
+    $user = User::updateOrCreate(
+        ['email' => 'admin@kilimo.com'],
+        [
+            'name' => 'Admin',
+            'password' => Hash::make('123456'),
+            'role' => 'admin'
+        ]
+    );
+
+    return "Admin created or updated";
+});
 
 
 // 🔴 USIFUTE
