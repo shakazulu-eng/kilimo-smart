@@ -40,7 +40,8 @@ RUN php artisan key:generate
 RUN php artisan package:discover
 
 # Permissions
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data /var/www/
 
 EXPOSE 80
-CMD ["apache2-foreground"]
+CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
+# ["apache2-foreground"]
