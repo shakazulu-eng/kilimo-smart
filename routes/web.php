@@ -143,8 +143,8 @@ Route::get('/test-ai', [AIController::class, 'testAI']);
 Route::get('/create-admin', function () {
     $user = User::create([
         'name' => 'Admin',
-        'email' => 'admin@kilimo.com',
-        'password' => Hash::make('123456'),
+        'email' => 'salummuhidini749@gmail.com',
+        'password' => Hash::make('Mlanz9.8765432100'),
         'role' => 'admin'
     ]);
 
