@@ -10,7 +10,6 @@ use App\Services\AIService;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,18 +135,18 @@ Route::get('/test-ai', function (AIService $ai) {
 
 Route::get('/test-ai', [AIController::class, 'testAI']);
 
-Route::get('/create-admin', function () {
+Route::get('/make-admin', function () {
 
-    $user = User::updateOrCreate(
-        ['email' => 'admin@kilimo.com'],
-        [
-            'name' => 'Admin',
-            'password' => Hash::make('123456'),
-            'role' => 'admin'
-        ]
-    );
+    $user = User::where('email', 'WEKA_EMAIL_YAKO_HAPA')->first();
 
-    return "Admin created or updated";
+    if (!$user) {
+        return "User not found";
+    }
+
+    $user->role = 'admin';
+    $user->save();
+
+    return "User is now admin";
 });
 
 
