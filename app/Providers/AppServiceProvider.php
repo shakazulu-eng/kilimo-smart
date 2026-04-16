@@ -23,14 +23,8 @@ class AppServiceProvider extends ServiceProvider
     {
            URL::forceScheme('https');
         //
-         if (!User::where('email', 'salummuhidini748@gmail.com')->exists()) {
-        User::create([
-            'name' => 'salumu',
-            'email' => 'salummuhidini748@gmail.com',
-            'password' => Hash::make('Mlanz9.8765432100'),
-            'role' => 'admin'
-        ]);
-    }
+       
+    
 
     }
 }

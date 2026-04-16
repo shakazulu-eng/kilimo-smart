@@ -9,8 +9,7 @@ use App\Http\Controllers\WeatherAlertController;
 use App\Services\AIService;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\Admin\UserManagementController;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -136,20 +135,6 @@ Route::get('/test-ai', function (AIService $ai) {
 Route::get('/test-ai', [AIController::class, 'testAI']);
 
 
-
-
-
-
-Route::get('/create-admin', function () {
-    $user = User::create([
-        'name' => 'Admin',
-        'email' => 'salummuhidini749@gmail.com',
-        'password' => Hash::make('Mlanz9.8765432100'),
-        'role' => 'admin'
-    ]);
-
-    return "Admin created successfully";
-});
 
 // 🔴 USIFUTE
 require __DIR__.'/auth.php';
