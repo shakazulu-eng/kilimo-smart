@@ -9,7 +9,7 @@ use App\Http\Controllers\WeatherAlertController;
 use App\Services\AIService;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\Admin\UserManagementController;
-use App\Models\User;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -135,19 +135,7 @@ Route::get('/test-ai', function (AIService $ai) {
 
 Route::get('/test-ai', [AIController::class, 'testAI']);
 
-Route::get('/make-admin', function () {
 
-    $user = User::where('email', 'salummuhidini749@gmail.com')->first();
-
-    if (!$user) {
-        return "User not found";
-    }
-
-    $user->role = 'admin';
-    $user->save();
-
-    return "User is now admin";
-});
 
 
 // 🔴 USIFUTE
