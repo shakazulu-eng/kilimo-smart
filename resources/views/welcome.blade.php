@@ -108,7 +108,7 @@
 
         <!-- IMAGE -->
         <div class="lg:w-1/2 mb-8 lg:mb-0">
-            <img src="{{ asset('kipo.jpeg') }}" 
+            <img src="{{ asset('images/kipo.jpeg') }}" 
                  alt="Hali ya hewa" 
                  class="rounded-xl shadow-lg w-full">
         </div>
