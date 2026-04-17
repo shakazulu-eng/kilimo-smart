@@ -100,6 +100,15 @@
 
 
 
+
+
+
+
+                
+            </main>
+
+
+
 <div class="w-full bg-gray-50 py-16">
     <div class="max-w-6xl mx-auto px-6 lg:flex items-center gap-10">
 
@@ -136,8 +145,7 @@
 
 
 
-                
-            </main>
+
         </div>
 
 
