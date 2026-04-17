@@ -32,13 +32,13 @@
                         </a>
                     @else
                            <a href="{{ route('login') }}"
-   class="inline-block px-5 py-1.5 text-white bg-orange-500 hover:bg-orange-600 border border-orange-500 rounded-md transition">
+   class="inline-block px-5 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition duration-300">
    Log in
 </a>
 
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}"
-   class="inline-block px-5 py-1.5 text-white bg-orange-500 hover:bg-orange-600 border border-orange-500 rounded-md transition">
+   class="inline-block px-5 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition duration-300">
    Register
 </a>
                         @endif
