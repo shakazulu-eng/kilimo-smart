@@ -9,7 +9,7 @@ use App\Http\Controllers\WeatherAlertController;
 use App\Services\AIService;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\Admin\UserManagementController;
-
+use App\Http\Controllers\MarketController;
 
 /*
 |--------------------------------------------------------------------------
