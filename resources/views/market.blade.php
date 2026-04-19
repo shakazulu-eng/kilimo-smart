@@ -9,6 +9,32 @@
 
 <body class="bg-gray-50 text-gray-800">
 
+
+
+
+
+<div class="bg-white p-6 rounded-xl shadow mb-6">
+    <h2 class="text-xl font-bold text-green-600 mb-4">
+        📊 Top Crops This Month
+    </h2>
+
+    <ul>
+        @foreach($topCrops as $crop)
+            <li class="flex justify-between border-b py-2">
+                <span>{{ $crop->crop }}</span>
+                <span class="text-green-600 font-bold">
+                    {{ round($crop->avg_demand) }}%
+                </span>
+            </li>
+        @endforeach
+    </ul>
+</div>
+
+
+
+
+
+
     <!-- HEADER -->
     <div class="bg-green-600 text-white p-6 text-center">
         <h1 class="text-3xl font-bold">🌾 Market Insights</h1>

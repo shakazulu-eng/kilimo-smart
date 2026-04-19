@@ -139,7 +139,7 @@ Route::get('/market', function () {
     return view('market');
 })->middleware('auth');
 
-
+Route::get('/market', [MarketController::class, 'index'])->middleware('auth');
 
 // 🔴 USIFUTE
 require __DIR__.'/auth.php';
