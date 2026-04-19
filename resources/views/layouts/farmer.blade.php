@@ -107,6 +107,9 @@
     <a href="{{ route('student.dashboard') }}">Dashboard</a>
     <a href="/student/weather-standalone">Weather Update</a>
    <a href="/student/crop-advice">Advice</a>
+<a href="/market" class="text-green-600 font-semibold hover:underline">
+    View Market Insights
+</a>
     <a href="{{ route('profile.edit') }}">Profile Settings</a>
 </nav>
 

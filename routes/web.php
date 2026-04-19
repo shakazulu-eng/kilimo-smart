@@ -135,6 +135,9 @@ Route::get('/test-ai', function (AIService $ai) {
 
 Route::get('/test-ai', [AIController::class, 'testAI']);
 
+Route::get('/market', function () {
+    return view('market');
+})->middleware('auth');
 
 
 
