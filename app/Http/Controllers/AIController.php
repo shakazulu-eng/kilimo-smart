@@ -3,28 +3,68 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\AIService;
+use Illuminate\Support\Facades\Http;
 
 class AIController extends Controller
 {
-    protected $ai;
-
-    public function __construct(AIService $ai)
+    public function chat(Request $request)
     {
-        $this->ai = $ai;
+        $userMessage = $request->input('message');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
+            'Content-Type' => 'application/json',
+        ])->post('https://api.groq.com/openai/v1/chat/completions', [
+            "model" => "llama3-8b-8192",
+            "messages" => [
+                [
+                    "role" => "system",
+                    "content" => "You are a helpful AI assistant specialized in agriculture and weather advice."
+                ],
+                [
+                    "role" => "user",
+                    "content" => $userMessage
+                ]
+            ]
+        ]);
+
+        if ($response->failed()) {
+            return response()->json([
+                'reply' => 'Error kutoka AI, jaribu tena.'
+            ]);
+        }
+
+        $reply = $response['choices'][0]['message']['content'];
+
+        return response()->json([
+            'reply' => $reply
+        ]);
     }
 
-    /**
-     * Test AI response
-     */
-    public function testAI()
+    // 🔥 AUTO AGRICULTURE ADVICE
+    public function autoAdvice(Request $request)
     {
-        // Hapa unaweza customize prompt kulingana na admin/student
-        $prompt = "Nipe maelezo ya kilimo cha mahindi kwa mwezi huu wa Februari";
+        $weather = $request->input('weather');
 
-        $reply = $this->ai->ask($prompt);
+        $prompt = "Based on this weather: $weather, give farming advice to a farmer in simple Swahili.";
 
-        // Rudisha view au json
-        return view('test-ai', compact('reply'));
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
+            'Content-Type' => 'application/json',
+        ])->post('https://api.groq.com/openai/v1/chat/completions', [
+            "model" => "llama3-8b-8192",
+            "messages" => [
+                [
+                    "role" => "user",
+                    "content" => $prompt
+                ]
+            ]
+        ]);
+
+        $reply = $response['choices'][0]['message']['content'];
+
+        return response()->json([
+            'advice' => $reply
+        ]);
     }
 }

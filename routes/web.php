@@ -127,13 +127,28 @@ Route::get('/student/alerts', [WeatherAlertController::class, 'showAlerts'])->na
    // );
 //});
 
-Route::get('/test-ai', function (AIService $ai) {
-    return $ai->ask(
-        'Mvua ni chache, nina mahindi yaliyopandwa wiki moja iliyopita. Nifanye nini?'
-    );
+//Route::get('/test-ai', function (AIService $ai) {
+  //  return $ai->ask(
+    //    'Mvua ni chache, nina mahindi yaliyopandwa wiki moja iliyopita. Nifanye nini?'
+   // );
+//});
+
+//Route::get('/test-ai', [AIController::class, 'testAI']);
+
+
+
+
+Route::get('/ai-test', function () {
+    return view('test-ai');
 });
 
-Route::get('/test-ai', [AIController::class, 'testAI']);
+Route::post('/ai-chat', [AIController::class, 'chat']);
+Route::post('/ai-advice', [AIController::class, 'autoAdvice']);
+
+
+
+
+
 
 Route::get('/market', function () {
     return view('market');
