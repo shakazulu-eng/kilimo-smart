@@ -78,7 +78,15 @@ function sendMessage() {
         },
         body: JSON.stringify({ message: message })
     })
-    .then(res => res.json())
+    .then(async (res) => {
+    const text = await res.text();
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        console.log("RAW RESPONSE:", text);
+        throw new Error("Server haijarudisha JSON");
+    }
+})
     .then(data => {
 
         let chatBox = document.getElementById('chat-box');
