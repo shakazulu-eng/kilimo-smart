@@ -3,33 +3,65 @@
 <head>
     <title>AI Assistant</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <style>
-        body { font-family: Arial; background: #f4f4f4; }
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
         #chat-box {
-            width: 400px;
+            width: 100%;
+            max-width: 500px;
             height: 400px;
             overflow-y: auto;
             background: white;
             padding: 10px;
             border: 1px solid #ccc;
+            margin-bottom: 10px;
         }
-        .user { color: blue; }
-        .ai { color: green; }
+
+        .user {
+            color: blue;
+            margin: 5px 0;
+        }
+
+        .ai {
+            color: green;
+            margin: 5px 0;
+        }
+
+        .error {
+            color: red;
+            margin: 5px 0;
+        }
+
+        input {
+            padding: 8px;
+            width: 70%;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
 
 <h2>AI Assistant 🤖</h2>
 
 <div id="chat-box"></div>
 
-<input type="text" id="message" placeholder="Andika swali..." style="width:300px;">
+<input type="text" id="message" placeholder="Andika message...">
 <button onclick="sendMessage()">Tuma</button>
 
 <hr>
 
-<h3>🌾 Auto Farming Advice</h3>
-<input type="text" id="weather" placeholder="Mfano: Sunny, Rainy...">
+<h3>🌾 Farming Advice</h3>
+<input type="text" id="weather" placeholder="Mfano: rain, sunny, dry">
 <button onclick="getAdvice()">Pata Ushauri</button>
 
 <p id="advice"></p>
@@ -48,13 +80,25 @@ function sendMessage() {
     })
     .then(res => res.json())
     .then(data => {
+
         let chatBox = document.getElementById('chat-box');
 
+        // USER MESSAGE
         chatBox.innerHTML += `<p class="user"><b>You:</b> ${message}</p>`;
-        chatBox.innerHTML += `<p class="ai"><b>AI:</b> ${data.reply}</p>`;
+
+        // AI RESPONSE HANDLING
+        if (data.status === 'success') {
+            chatBox.innerHTML += `<p class="ai"><b>AI:</b> ${data.reply}</p>`;
+        } else {
+            chatBox.innerHTML += `<p class="error"><b>Error:</b> ${data.details || data.message}</p>`;
+        }
 
         document.getElementById('message').value = '';
         chatBox.scrollTop = chatBox.scrollHeight;
+    })
+    .catch(err => {
+        document.getElementById('chat-box').innerHTML +=
+            `<p class="error"><b>JS Error:</b> ${err}</p>`;
     });
 }
 
@@ -71,7 +115,16 @@ function getAdvice() {
     })
     .then(res => res.json())
     .then(data => {
-        document.getElementById('advice').innerText = data.advice;
+
+        if (data.status === 'success') {
+            document.getElementById('advice').innerText = data.advice;
+        } else {
+            document.getElementById('advice').innerText =
+                data.details || data.message || 'Error imetokea';
+        }
+    })
+    .catch(err => {
+        document.getElementById('advice').innerText = 'JS Error: ' + err;
     });
 }
 </script>
