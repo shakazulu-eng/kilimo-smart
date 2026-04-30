@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Http;
 
 class AIController extends Controller
 {
+
+header('Content-Type: application/json');
     // 💬 CHAT FUNCTION
     public function chat(Request $request)
     {
