@@ -7,78 +7,43 @@ use Illuminate\Support\Facades\Http;
 
 class AIController extends Controller
 {
-
-header('Content-Type: application/json');
-    // 💬 CHAT FUNCTION
     public function chat(Request $request)
     {
-        try {
-            $userMessage = $request->input('message');
+        $message = $request->input('message');
 
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
-                'Content-Type' => 'application/json',
-            ])->post('https://api.groq.com/openai/v1/chat/completions', [
-                "model" => "model" => "llama-3.1-8b-instant",
+        $response = Http::withToken(env('GROQ_API_KEY'))
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                "model" => "llama-3.1-8b-instant",
                 "messages" => [
                     [
-                        "role" => "system",
-                        "content" => "You are a helpful AI assistant specialized in agriculture and weather advice. Reply in Swahili."
-                    ],
-                    [
                         "role" => "user",
-                        "content" => $userMessage
+                        "content" => $message
                     ]
                 ]
             ]);
 
-            // 🔴 SHOW REAL ERROR FROM GROQ
-            if ($response->failed()) {
-                return response()->json([
-                    'status' => 'error',
-                    'source' => 'groq',
-                    'details' => $response->body()
-                ], 500);
-            }
-
-            // 🔴 HANDLE BAD RESPONSE FORMAT
-            if (!isset($response['choices'][0]['message']['content'])) {
-                return response()->json([
-                    'status' => 'error',
-                    'source' => 'format',
-                    'details' => $response->body()
-                ], 500);
-            }
-
-            $reply = $response['choices'][0]['message']['content'];
-
+        if ($response->ok()) {
             return response()->json([
                 'status' => 'success',
-                'reply' => $reply
+                'reply' => $response['choices'][0]['message']['content']
             ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'source' => 'server',
-                'message' => $e->getMessage()
-            ], 500);
         }
+
+        return response()->json([
+            'status' => 'error',
+            'reply' => 'AI haijajibu (check API key au quota)'
+        ]);
     }
 
-    // 🌾 AUTO FARMING ADVICE
     public function autoAdvice(Request $request)
     {
-        try {
-            $weather = $request->input('weather');
+        $weather = $request->input('weather');
 
-            $prompt = "Hali ya hewa ni: $weather. Toa ushauri wa kilimo kwa mkulima kwa lugha rahisi ya Kiswahili.";
+        $prompt = "Hali ya hewa ni: $weather. Toa ushauri wa kilimo kwa Kiswahili.";
 
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
-                'Content-Type' => 'application/json',
-            ])->post('https://api.groq.com/openai/v1/chat/completions', [
-                "model" => "llama3-8b-8192",
+        $response = Http::withToken(env('GROQ_API_KEY'))
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                "model" => "llama-3.1-8b-instant",
                 "messages" => [
                     [
                         "role" => "user",
@@ -87,37 +52,16 @@ header('Content-Type: application/json');
                 ]
             ]);
 
-            // 🔴 SHOW REAL ERROR
-            if ($response->failed()) {
-                return response()->json([
-                    'status' => 'error',
-                    'source' => 'groq',
-                    'details' => $response->body()
-                ], 500);
-            }
-
-            // 🔴 HANDLE FORMAT ISSUE
-            if (!isset($response['choices'][0]['message']['content'])) {
-                return response()->json([
-                    'status' => 'error',
-                    'source' => 'format',
-                    'details' => $response->body()
-                ], 500);
-            }
-
-            $reply = $response['choices'][0]['message']['content'];
-
+        if ($response->ok()) {
             return response()->json([
                 'status' => 'success',
-                'advice' => $reply
+                'advice' => $response['choices'][0]['message']['content']
             ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'source' => 'server',
-                'message' => $e->getMessage()
-            ], 500);
         }
+
+        return response()->json([
+            'status' => 'error',
+            'advice' => 'Imeshindikana kupata ushauri'
+        ]);
     }
 }
