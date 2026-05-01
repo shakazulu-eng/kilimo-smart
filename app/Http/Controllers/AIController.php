@@ -86,7 +86,7 @@ class AIController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'weather' => "$condition, $temp°C",
+               'weather' => $condition . ', ' . $temp . '°C',
                 'advice' => $ai['choices'][0]['message']['content'] ?? 'No advice'
             ]);
 
