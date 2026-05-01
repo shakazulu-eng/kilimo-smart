@@ -69,7 +69,15 @@ public function autoAdvice()
         // ⚠️ HAPA NDIO FIX
         $tempWithUnit = $temp . "°C";
 
-        $prompt = "Hali ya hewa ni " . $condition . " na joto ni " . $tempWithUnit . ". Toa ushauri wa kilimo kwa Kiswahili.";
+       $prompt = "Hali ya hewa ni " . $condition . " na joto ni " . $tempWithUnit . ".
+Toa ushauri wa kilimo kwa mkulima wa Tanzania kwa lugha rahisi ya Kiswahili.
+
+Sheria:
+- Tumia Kiswahili tu (usiweke English)
+- Toa mazao sahihi tu (mfano: mahindi, mpunga, maharage, mihogo)
+- Epuka taarifa zisizo sahihi
+- Toa ushauri mfupi na unaoeleweka
+";
 
         $ai = Http::withToken(env('GROQ_API_KEY'))
             ->post('https://api.groq.com/openai/v1/chat/completions', [
