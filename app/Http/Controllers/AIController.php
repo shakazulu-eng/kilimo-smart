@@ -9,121 +9,93 @@ class AIController extends Controller
 {
     public function chat(Request $request)
     {
-        $message = $request->input('message');
+        try {
+            $message = $request->input('message');
 
-        $response = Http::withToken(env('GROQ_API_KEY'))
-            ->post('https://api.groq.com/openai/v1/chat/completions', [
-                "model" => "llama-3.1-8b-instant",
-                "messages" => [
-                    [
-                        "role" => "user",
-                        "content" => $message
+            $response = Http::withToken(env('GROQ_API_KEY'))
+                ->post('https://api.groq.com/openai/v1/chat/completions', [
+                    "model" => "llama-3.1-8b-instant",
+                    "messages" => [
+                        ["role" => "user", "content" => $message]
                     ]
-                ]
-            ]);
+                ]);
 
-        if ($response->ok()) {
+            if (!$response->ok()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Groq error',
+                    'debug' => $response->body()
+                ]);
+            }
+
             return response()->json([
                 'status' => 'success',
-                'reply' => $response['choices'][0]['message']['content']
+                'reply' => $response['choices'][0]['message']['content'] ?? 'No reply'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Server crash (chat)',
+                'debug' => $e->getMessage()
             ]);
         }
-
-        return response()->json([
-            'status' => 'error',
-            'reply' => 'AI haijajibu (check API key au quota)'
-        ]);
     }
 
-               
-public function autoAdvice()
-{
-    try {
-        // 🔑 hakikisha key ipo
-        if (!env('WEATHER_API_KEY')) {
+    public function autoAdvice()
+    {
+        try {
+            // 🌦️ GET WEATHER
+            $weatherResponse = Http::get("https://api.openweathermap.org/data/2.5/weather", [
+                'q' => 'Dar es Salaam',
+                'appid' => env('OPENWEATHER_API_KEY'),
+                'units' => 'metric'
+            ]);
+
+            if (!$weatherResponse->ok()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Weather API error',
+                    'debug' => $weatherResponse->body()
+                ]);
+            }
+
+            $data = $weatherResponse->json();
+
+            $temp = $data['main']['temp'] ?? 'N/A';
+            $condition = $data['weather'][0]['description'] ?? 'unknown';
+
+            // 🤖 AI REQUEST
+            $prompt = "Hali ya hewa ni $condition na joto ni $temp°C. Toa ushauri wa kilimo kwa Kiswahili.";
+
+            $ai = Http::withToken(env('GROQ_API_KEY'))
+                ->post('https://api.groq.com/openai/v1/chat/completions', [
+                    "model" => "llama-3.1-8b-instant",
+                    "messages" => [
+                        ["role" => "user", "content" => $prompt]
+                    ]
+                ]);
+
+            if (!$ai->ok()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'AI error',
+                    'debug' => $ai->body()
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'weather' => "$condition, $temp°C",
+                'advice' => $ai['choices'][0]['message']['content'] ?? 'No advice'
+            ]);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'WEATHER_API_KEY haijawekwa'
+                'message' => 'Server crash (advice)',
+                'debug' => $e->getMessage()
             ]);
         }
-
-        // 🌦️ pata weather
-        $weatherResponse = Http::get("https://api.openweathermap.org/data/2.5/weather", [
-            'q' => 'Dar es Salaam',
-            'appid' => env('WEATHER_API_KEY'),
-            'units' => 'metric'
-        ]);
-
-        if (!$weatherResponse->ok()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Weather API imekataa request',
-                'debug' => $weatherResponse->body()
-            ]);
-        }
-
-        $data = $weatherResponse->json();
-
-        // 🛑 safe extraction
-        $temp = $data['main']['temp'] ?? null;
-        $condition = $data['weather'][0]['description'] ?? null;
-
-        if (!$temp || !$condition) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Weather data haijakamilika',
-                'debug' => $data
-            ]);
-        }
-
-        // 🤖 AI
-        $prompt = "Hali ya hewa ni $condition na joto ni $temp°C. Toa ushauri wa kilimo kwa Kiswahili.";
-
-        $ai = Http::withToken(env('GROQ_API_KEY'))
-            ->post('https://api.groq.com/openai/v1/chat/completions', [
-                "model" => "llama-3.1-8b-instant",
-                "messages" => [
-                    ["role" => "user", "content" => $prompt]
-                ]
-            ]);
-
-        if (!$ai->ok()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'AI imekataa request',
-                'debug' => $ai->body()
-            ]);
-        }
-
-        $reply = $ai['choices'][0]['message']['content'] ?? null;
-
-        if (!$reply) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'AI response haipo',
-                'debug' => $ai->body()
-            ]);
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'weather' => "$condition, $temp°C",
-            'advice' => $reply
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Server crash',
-            'debug' => $e->getMessage()
-        ]);
     }
-}  
-
-               
-//       return response()->json([
-   //         'status' => 'error',
-     //       'advice' => 'Imeshindikana kupata ushauri'
-       // ]);
-   // }
-//}
+}
