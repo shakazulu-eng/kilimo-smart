@@ -36,67 +36,92 @@ class AIController extends Controller
     }
 
                
-                 
-                 public function autoAdvice()
+public function autoAdvice()
 {
     try {
-        // 🌦️ CHUKUA WEATHER (example: Dar es Salaam)
+        // 🔑 hakikisha key ipo
+        if (!env('WEATHER_API_KEY')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'WEATHER_API_KEY haijawekwa'
+            ]);
+        }
+
+        // 🌦️ pata weather
         $weatherResponse = Http::get("https://api.openweathermap.org/data/2.5/weather", [
             'q' => 'Dar es Salaam',
-            'appid' => env('WEATHER_API_KEY'),
+            'appid' => env('OPENWEATHER_API_KEY'),
             'units' => 'metric'
         ]);
 
         if (!$weatherResponse->ok()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Imeshindikana kupata weather data'
+                'message' => 'Weather API imekataa request',
+                'debug' => $weatherResponse->body()
             ]);
         }
 
-        $weatherData = $weatherResponse->json();
+        $data = $weatherResponse->json();
 
-        $temp = $weatherData['main']['temp'];
-        $condition = $weatherData['weather'][0]['description'];
+        // 🛑 safe extraction
+        $temp = $data['main']['temp'] ?? null;
+        $condition = $data['weather'][0]['description'] ?? null;
 
-        // 🤖 AI PROMPT
-        $prompt = "Hali ya hewa ni $condition na joto ni $temp°C. Toa ushauri wa kilimo kwa mkulima kwa Kiswahili.";
+        if (!$temp || !$condition) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Weather data haijakamilika',
+                'debug' => $data
+            ]);
+        }
 
-        $aiResponse = Http::withToken(env('GROQ_API_KEY'))
+        // 🤖 AI
+        $prompt = "Hali ya hewa ni $condition na joto ni $temp°C. Toa ushauri wa kilimo kwa Kiswahili.";
+
+        $ai = Http::withToken(env('GROQ_API_KEY'))
             ->post('https://api.groq.com/openai/v1/chat/completions', [
                 "model" => "llama-3.1-8b-instant",
                 "messages" => [
-                    [
-                        "role" => "user",
-                        "content" => $prompt
-                    ]
+                    ["role" => "user", "content" => $prompt]
                 ]
             ]);
 
-        if ($aiResponse->ok()) {
+        if (!$ai->ok()) {
             return response()->json([
-                'status' => 'success',
-                'weather' => "$condition, $temp°C",
-                'advice' => $aiResponse['choices'][0]['message']['content']
+                'status' => 'error',
+                'message' => 'AI imekataa request',
+                'debug' => $ai->body()
+            ]);
+        }
+
+        $reply = $ai['choices'][0]['message']['content'] ?? null;
+
+        if (!$reply) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'AI response haipo',
+                'debug' => $ai->body()
             ]);
         }
 
         return response()->json([
-            'status' => 'error',
-            'message' => 'AI haijajibu'
+            'status' => 'success',
+            'weather' => "$condition, $temp°C",
+            'advice' => $reply
         ]);
 
     } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
-            'message' => $e->getMessage()
+            'message' => 'Server crash',
+            'debug' => $e->getMessage()
         ]);
     }
-}
+}  
 
-
-
- //       return response()->json([
+               
+//       return response()->json([
    //         'status' => 'error',
      //       'advice' => 'Imeshindikana kupata ushauri'
        // ]);
