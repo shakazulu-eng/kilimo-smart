@@ -42,7 +42,68 @@ class AIController extends Controller
         }
     }
 
-    public function autoAdvice()
+
+
+public function autoAdvice()
+{
+    try {
+        $weatherResponse = Http::get("https://api.openweathermap.org/data/2.5/weather", [
+            'q' => 'Dar es Salaam',
+            'appid' => env('OPENWEATHER_API_KEY'),
+            'units' => 'metric'
+        ]);
+
+        if (!$weatherResponse->ok()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Weather API error',
+                'debug' => $weatherResponse->body()
+            ]);
+        }
+
+        $data = $weatherResponse->json();
+
+        $temp = $data['main']['temp'] ?? 0;
+        $condition = $data['weather'][0]['description'] ?? 'unknown';
+
+        // ⚠️ HAPA NDIO FIX
+        $tempWithUnit = $temp . "°C";
+
+        $prompt = "Hali ya hewa ni " . $condition . " na joto ni " . $tempWithUnit . ". Toa ushauri wa kilimo kwa Kiswahili.";
+
+        $ai = Http::withToken(env('GROQ_API_KEY'))
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                "model" => "llama-3.1-8b-instant",
+                "messages" => [
+                    ["role" => "user", "content" => $prompt]
+                ]
+            ]);
+
+        if (!$ai->ok()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'AI error',
+                'debug' => $ai->body()
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'weather' => $condition . ', ' . $tempWithUnit,
+            'advice' => $ai['choices'][0]['message']['content'] ?? 'No advice'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Server crash (advice)',
+            'debug' => $e->getMessage()
+        ]);
+    }
+}
+
+
+/*    public function autoAdvice()
     {
         try {
             // 🌦️ GET WEATHER
@@ -97,5 +158,5 @@ class AIController extends Controller
                 'debug' => $e->getMessage()
             ]);
         }
-    }
+    }*/
 }
