@@ -110,31 +110,28 @@ function sendMessage() {
     });
 }
 
+
 function getAdvice() {
-    let weather = document.getElementById('weather').value;
 
     fetch('/ai-advice', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ weather: weather })
+        }
     })
     .then(res => res.json())
     .then(data => {
 
         if (data.status === 'success') {
-            document.getElementById('advice').innerText = data.advice;
-        } else {
             document.getElementById('advice').innerText =
-                data.details || data.message || 'Error imetokea';
+                "🌦️ Weather: " + data.weather + "\n\n🌾 Advice: " + data.advice;
+        } else {
+            document.getElementById('advice').innerText = data.message;
         }
-    })
-    .catch(err => {
-        document.getElementById('advice').innerText = 'JS Error: ' + err;
     });
 }
+
+
 </script>
 
 </body>

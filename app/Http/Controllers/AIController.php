@@ -35,13 +35,34 @@ class AIController extends Controller
         ]);
     }
 
-    public function autoAdvice(Request $request)
-    {
-        $weather = $request->input('weather');
+               
+                 
+                 public function autoAdvice()
+{
+    try {
+        // 🌦️ CHUKUA WEATHER (example: Dar es Salaam)
+        $weatherResponse = Http::get("https://api.openweathermap.org/data/2.5/weather", [
+            'q' => 'Dar es Salaam',
+            'appid' => env('WEATHER_API_KEY'),
+            'units' => 'metric'
+        ]);
 
-        $prompt = "Hali ya hewa ni: $weather. Toa ushauri wa kilimo kwa Kiswahili.";
+        if (!$weatherResponse->ok()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Imeshindikana kupata weather data'
+            ]);
+        }
 
-        $response = Http::withToken(env('GROQ_API_KEY'))
+        $weatherData = $weatherResponse->json();
+
+        $temp = $weatherData['main']['temp'];
+        $condition = $weatherData['weather'][0]['description'];
+
+        // 🤖 AI PROMPT
+        $prompt = "Hali ya hewa ni $condition na joto ni $temp°C. Toa ushauri wa kilimo kwa mkulima kwa Kiswahili.";
+
+        $aiResponse = Http::withToken(env('GROQ_API_KEY'))
             ->post('https://api.groq.com/openai/v1/chat/completions', [
                 "model" => "llama-3.1-8b-instant",
                 "messages" => [
@@ -52,16 +73,32 @@ class AIController extends Controller
                 ]
             ]);
 
-        if ($response->ok()) {
+        if ($aiResponse->ok()) {
             return response()->json([
                 'status' => 'success',
-                'advice' => $response['choices'][0]['message']['content']
+                'weather' => "$condition, $temp°C",
+                'advice' => $aiResponse['choices'][0]['message']['content']
             ]);
         }
 
         return response()->json([
             'status' => 'error',
-            'advice' => 'Imeshindikana kupata ushauri'
+            'message' => 'AI haijajibu'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
         ]);
     }
 }
+
+
+
+ //       return response()->json([
+   //         'status' => 'error',
+     //       'advice' => 'Imeshindikana kupata ushauri'
+       // ]);
+   // }
+//}
