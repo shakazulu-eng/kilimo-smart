@@ -49,7 +49,7 @@ public function autoAdvice()
     try {
         $weatherResponse = Http::get("https://api.openweathermap.org/data/2.5/weather", [
             'q' => 'Dar es Salaam',
-            'appid' => env('OPENWEATHER_API_KEY'),
+            'appid' => env('WEATHER_API_KEY'),
             'units' => 'metric'
         ]);
 
