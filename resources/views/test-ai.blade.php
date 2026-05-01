@@ -19,7 +19,7 @@
 <h3>🌾 Farming Advice</h3>
 <button onclick="getAdvice()">Pata Ushauri</button>
 
-<pre id="advice"></pre>
+<div id="advice" style="background:#fff;padding:10px;border:1px solid #ccc;"></div>
 
 <script>
 function safeFetch(url, options) {
@@ -64,10 +64,17 @@ function getAdvice() {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         }
     })
-    .then(data => {
-        document.getElementById('advice').textContent =
-            JSON.stringify(data, null, 2);
-    })
+
+if (data.status === 'success') {
+    document.getElementById('advice').innerHTML = `
+        <b>🌦️ Weather:</b> ${data.weather}<br><br>
+        <b>🌾 Advice:</b><br>${data.advice}
+    `;
+} else {
+    document.getElementById('advice').innerText =
+        data.message || 'Error imetokea';
+}
+
     .catch(err => {
         document.getElementById('advice').textContent = err;
     });
