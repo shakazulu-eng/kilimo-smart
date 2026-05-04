@@ -102,6 +102,83 @@ Tumia mazao kama mahindi, mpunga, maharage.";
             ]);
         }
     }
+
+
+
+public function cropAdvice(Request $request)
+{
+    try {
+        $crop = $request->input('crop');
+
+        if (!$crop) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tafadhali ingiza aina ya zao'
+            ]);
+        }
+
+        // 🌦️ Weather
+        $weather = Http::get("https://api.openweathermap.org/data/2.5/weather", [
+            'q' => 'Dar es Salaam',
+            'appid' => env('WEATHER_API_KEY'),
+            'units' => 'metric'
+        ]);
+
+        if (!$weather->ok()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Weather error'
+            ]);
+        }
+
+        $data = $weather->json();
+
+        $temp = $data['main']['temp'] ?? 0;
+        $condition = $data['weather'][0]['description'] ?? 'unknown';
+
+        $tempWithUnit = $temp . "°C";
+
+        // 🤖 SMART PROMPT
+        $prompt = "Hali ya hewa ni " . $condition . " na joto ni " . $tempWithUnit . ".
+Mkulima anataka kupanda " . $crop . ".
+
+Toa ushauri sahihi kwa mkulima wa Tanzania:
+- Je, ni wakati mzuri kupanda?
+- Tahadhari gani azingatie?
+- Toa majibu kwa Kiswahili rahisi.";
+
+        $ai = Http::withToken(env('GROQ_API_KEY'))
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                "model" => "llama-3.1-8b-instant",
+                "messages" => [
+                    ["role" => "user", "content" => $prompt]
+                ]
+            ]);
+
+        if (!$ai->ok()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'AI error'
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'crop' => $crop,
+            'weather' => $condition . ', ' . $tempWithUnit,
+            'advice' => $ai['choices'][0]['message']['content']
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ]);
+    }
+//}
+
+
+
 }
 
 

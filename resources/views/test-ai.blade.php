@@ -81,5 +81,44 @@ function getAdvice() {
 }
 </script>
 
+
+<hr>
+
+<h3>🌽 Crop Advice</h3>
+
+<input type="text" id="crop" placeholder="Mfano: mahindi, mpunga">
+<button onclick="getCropAdvice()">Pata Ushauri wa Zao</button>
+
+<div id="crop-result"></div>
+
+
+function getCropAdvice() {
+
+    let crop = document.getElementById('crop').value;
+
+    fetch('/crop-advice', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ crop: crop })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.status === 'success') {
+            document.getElementById('crop-result').innerHTML = `
+                <b>🌽 Zao:</b> ${data.crop}<br>
+                <b>🌦️ Weather:</b> ${data.weather}<br><br>
+                <b>📊 Ushauri:</b><br>${data.advice}
+            `;
+        } else {
+            document.getElementById('crop-result').innerText = data.message;
+        }
+    });
+}
+
+
 </body>
 </html>
