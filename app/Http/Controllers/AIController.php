@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 
 class AIController extends Controller
 {
+    // 💬 CHAT
     public function chat(Request $request)
     {
         try {
@@ -23,92 +24,87 @@ class AIController extends Controller
             if (!$response->ok()) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Groq error',
+                    'message' => 'AI error',
                     'debug' => $response->body()
                 ]);
             }
 
             return response()->json([
                 'status' => 'success',
-                'reply' => $response['choices'][0]['message']['content'] ?? 'No reply'
+                'reply' => $response['choices'][0]['message']['content'] ?? 'Hakuna majibu'
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Server crash (chat)',
-                'debug' => $e->getMessage()
+                'message' => $e->getMessage()
             ]);
         }
     }
 
+    // 🌾 WEATHER + AI
+    public function autoAdvice()
+    {
+        try {
+            // 🌦️ Weather
+            $weather = Http::get("https://api.openweathermap.org/data/2.5/weather", [
+                'q' => 'Dar es Salaam',
+                'appid' => env('OPENWEATHER_API_KEY'),
+                'units' => 'metric'
+            ]);
 
+            if (!$weather->ok()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Weather API error',
+                    'debug' => $weather->body()
+                ]);
+            }
 
-public function autoAdvice()
-{
-    try {
-        $weatherResponse = Http::get("https://api.openweathermap.org/data/2.5/weather", [
-            'q' => 'Dar es Salaam',
-            'appid' => env('WEATHER_API_KEY'),
-            'units' => 'metric'
-        ]);
+            $data = $weather->json();
 
-        if (!$weatherResponse->ok()) {
+            $temp = $data['main']['temp'] ?? 0;
+            $condition = $data['weather'][0]['description'] ?? 'unknown';
+
+            $tempWithUnit = $temp . "°C";
+
+            // 🤖 Prompt safi
+            $prompt = "Hali ya hewa ni " . $condition . " na joto ni " . $tempWithUnit . ".
+Toa ushauri mfupi wa kilimo kwa mkulima wa Tanzania kwa Kiswahili rahisi.
+Tumia mazao kama mahindi, mpunga, maharage.";
+
+            $ai = Http::withToken(env('GROQ_API_KEY'))
+                ->post('https://api.groq.com/openai/v1/chat/completions', [
+                    "model" => "llama-3.1-8b-instant",
+                    "messages" => [
+                        ["role" => "user", "content" => $prompt]
+                    ]
+                ]);
+
+            if (!$ai->ok()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'AI error',
+                    'debug' => $ai->body()
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'weather' => $condition . ', ' . $tempWithUnit,
+                'advice' => $ai['choices'][0]['message']['content'] ?? 'Hakuna ushauri'
+            ]);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Weather API error',
-                'debug' => $weatherResponse->body()
+                'message' => $e->getMessage()
             ]);
         }
-
-        $data = $weatherResponse->json();
-
-        $temp = $data['main']['temp'] ?? 0;
-        $condition = $data['weather'][0]['description'] ?? 'unknown';
-
-        // ⚠️ HAPA NDIO FIX
-        $tempWithUnit = $temp . "°C";
-
-       $prompt = "Hali ya hewa ni " . $condition . " na joto ni " . $tempWithUnit . ".
-Toa ushauri wa kilimo kwa mkulima wa Tanzania kwa lugha rahisi ya Kiswahili.
-
-Sheria:
-- Tumia Kiswahili tu (usiweke English)
-- Toa mazao sahihi tu (mfano: mahindi, mpunga, maharage, mihogo)
-- Epuka taarifa zisizo sahihi
-- Toa ushauri mfupi na unaoeleweka
-";
-
-        $ai = Http::withToken(env('GROQ_API_KEY'))
-            ->post('https://api.groq.com/openai/v1/chat/completions', [
-                "model" => "llama-3.1-8b-instant",
-                "messages" => [
-                    ["role" => "user", "content" => $prompt]
-                ]
-            ]);
-
-        if (!$ai->ok()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'AI error',
-                'debug' => $ai->body()
-            ]);
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'weather' => $condition . ', ' . $tempWithUnit,
-            'advice' => $ai['choices'][0]['message']['content'] ?? 'No advice'
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Server crash (advice)',
-            'debug' => $e->getMessage()
-        ]);
     }
 }
+
+
 
 
 /*    public function autoAdvice()
@@ -167,4 +163,4 @@ Sheria:
             ]);
         }
     }*/
-}
+

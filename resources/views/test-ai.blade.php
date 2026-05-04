@@ -3,15 +3,23 @@
 <head>
     <title>AI Assistant</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <style>
+        body { font-family: Arial; background:#f4f4f4; padding:20px; }
+        #chat-box { background:#fff; padding:10px; height:300px; overflow:auto; border:1px solid #ccc; }
+        .user { color:blue; }
+        .ai { color:green; }
+        #advice { background:#fff; padding:10px; border:1px solid #ccc; margin-top:10px; }
+    </style>
 </head>
 
 <body>
 
 <h2>AI Assistant 🤖</h2>
 
-<div id="chat-box" style="border:1px solid #ccc;height:300px;overflow:auto;"></div>
+<div id="chat-box"></div>
 
-<input type="text" id="message">
+<input type="text" id="message" placeholder="Andika hapa...">
 <button onclick="sendMessage()">Send</button>
 
 <hr>
@@ -19,26 +27,13 @@
 <h3>🌾 Farming Advice</h3>
 <button onclick="getAdvice()">Pata Ushauri</button>
 
-<pre id="advice"></pre>
+<div id="advice"></div>
 
 <script>
-function safeFetch(url, options) {
-    return fetch(url, options).then(async (res) => {
-        const text = await res.text();
-
-        try {
-            return JSON.parse(text);
-        } catch (e) {
-            console.log("❌ RAW RESPONSE:", text);
-            throw new Error("Server haijarudisha JSON");
-        }
-    });
-}
-
 function sendMessage() {
     let message = document.getElementById('message').value;
 
-    safeFetch('/ai-chat', {
+    fetch('/ai-chat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -46,30 +41,42 @@ function sendMessage() {
         },
         body: JSON.stringify({ message })
     })
+    .then(res => res.json())
     .then(data => {
-        document.getElementById('chat-box').innerHTML += `
-            <p><b>You:</b> ${message}</p>
-            <p><b>AI:</b> ${data.reply || data.message}</p>
-        `;
-    })
-    .catch(err => {
-        document.getElementById('chat-box').innerHTML += `<p style="color:red">${err}</p>`;
+
+        let chat = document.getElementById('chat-box');
+
+        chat.innerHTML += `<p class="user"><b>You:</b> ${message}</p>`;
+
+        if (data.status === 'success') {
+            chat.innerHTML += `<p class="ai"><b>AI:</b> ${data.reply}</p>`;
+        } else {
+            chat.innerHTML += `<p style="color:red">${data.message}</p>`;
+        }
+
+        document.getElementById('message').value = '';
+        chat.scrollTop = chat.scrollHeight;
     });
 }
 
 function getAdvice() {
-    safeFetch('/ai-advice', {
+    fetch('/ai-advice', {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         }
     })
+    .then(res => res.json())
+    .then(data => {
 
-document.getElementById('advice').textContent =
-    JSON.stringify(data, null, 2);
-
-    .catch(err => {
-        document.getElementById('advice').textContent = err;
+        if (data.status === 'success') {
+            document.getElementById('advice').innerHTML = `
+                <b>🌦️ Weather:</b> ${data.weather}<br><br>
+                <b>🌾 Advice:</b><br>${data.advice}
+            `;
+        } else {
+            document.getElementById('advice').innerText = data.message;
+        }
     });
 }
 </script>
