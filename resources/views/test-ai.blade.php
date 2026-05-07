@@ -309,7 +309,175 @@
 </a>
 </nav>
 <!-- Original Scripts -->
+
 <script>
+async function sendMessage() {
+
+    const messageInput = document.getElementById('message');
+    const message = messageInput.value.trim();
+
+    if (!message) return;
+
+    const chatBox = document.getElementById('chat-box');
+
+    // USER MESSAGE
+    const userDiv = document.createElement('div');
+    userDiv.className =
+        'chat-bubble-user self-end max-w-[85%] lg:max-w-[70%] px-lg py-md';
+
+    userDiv.innerHTML =
+        `<p class="text-body-md">${message}</p>`;
+
+    chatBox.appendChild(userDiv);
+
+    messageInput.value = '';
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+
+        const response = await fetch('/ai-chat', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json',
+
+                'X-CSRF-TOKEN':
+                    document.querySelector('meta[name="csrf-token"]').content
+            },
+
+            body: JSON.stringify({
+                message: message
+            })
+        });
+
+        const data = await response.json();
+
+        // AI MESSAGE
+        const botDiv = document.createElement('div');
+
+        botDiv.className =
+            'chat-bubble-assistant self-start max-w-[85%] lg:max-w-[70%] px-lg py-md shadow-sm mt-md';
+
+        botDiv.innerHTML =
+            `<p class="text-body-md">${data.reply || data.message}</p>`;
+
+        chatBox.appendChild(botDiv);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+}
+
+
+// 🌾 WEATHER ADVICE
+async function getAdvice() {
+
+    const adviceContainer = document.getElementById('advice');
+
+    adviceContainer.innerHTML =
+        'Loading farming advice...';
+
+    try {
+
+        const response = await fetch('/ai-advice', {
+
+            method: 'POST',
+
+            headers: {
+                'X-CSRF-TOKEN':
+                    document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
+
+        const data = await response.json();
+
+        adviceContainer.innerHTML = `
+            <div class="space-y-2">
+                <p><strong>🌦️ Weather:</strong> ${data.weather}</p>
+                <p><strong>🌾 Advice:</strong><br>${data.advice}</p>
+            </div>
+        `;
+
+    } catch (error) {
+
+        adviceContainer.innerHTML =
+            'Failed to fetch farming advice';
+
+        console.error(error);
+    }
+}
+
+
+// 🌽 CROP ADVICE
+async function getCropAdvice() {
+
+    const crop = document.getElementById('crop').value.trim();
+
+    if (!crop) return;
+
+    const resultContainer =
+        document.getElementById('crop-result');
+
+    resultContainer.innerHTML =
+        'Analyzing crop...';
+
+    try {
+
+        const response = await fetch('/crop-advice', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json',
+
+                'X-CSRF-TOKEN':
+                    document.querySelector('meta[name="csrf-token"]').content
+            },
+
+            body: JSON.stringify({
+                crop: crop
+            })
+        });
+
+        const data = await response.json();
+
+        resultContainer.innerHTML = `
+            <div class="space-y-2">
+                <p><strong>🌽 Crop:</strong> ${data.crop}</p>
+                <p><strong>🌦️ Weather:</strong> ${data.weather}</p>
+                <p><strong>📋 Advice:</strong><br>${data.advice}</p>
+            </div>
+        `;
+
+    } catch (error) {
+
+        resultContainer.innerHTML =
+            'Crop analysis failed';
+
+        console.error(error);
+    }
+}
+
+
+// ENTER KEY
+document.getElementById('message')
+    .addEventListener('keypress', function(e) {
+
+        if (e.key === 'Enter') {
+
+            sendMessage();
+        }
+    });
+</script>
+
+
+
+/*<script>
         async function sendMessage() {
             const messageInput = document.getElementById('message');
             const message = messageInput.value.trim();
@@ -401,5 +569,5 @@
                 sendMessage();
             }
         });
-    </script>
+    </script>*/
 </body></html>
