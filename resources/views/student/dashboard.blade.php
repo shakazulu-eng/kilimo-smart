@@ -24,25 +24,39 @@
 </ul>
 
 
-<a href="/test-ai"
-   class="fixed bottom-6 right-6 z-50 group">
 
+<form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit">Logout</button>
+</form>
+
+<a href="{{ url('/test-ai') }}"
+   class="fixed bottom-5 right-5 z-50 group flex items-center gap-2">
+
+    <!-- Text -->
+    <span class="bg-green-600 text-white text-sm font-semibold
+                 px-3 py-2 rounded-full shadow-lg
+                 group-hover:bg-green-700 transition-all duration-300">
+        Chat with Assistant
+    </span>
+
+    <!-- Small AI Icon -->
     <div class="relative flex items-center justify-center
-                w-16 h-16 rounded-full
+                w-12 h-12 rounded-full
                 bg-gradient-to-r from-green-600 to-emerald-500
-                shadow-2xl shadow-green-500/40
+                shadow-xl shadow-green-500/30
                 hover:scale-110
                 transition-all duration-300">
 
-        <!-- Glow Effect -->
+        <!-- Glow -->
         <div class="absolute inset-0 rounded-full
-                    bg-green-400 blur-xl opacity-40
-                    group-hover:opacity-70 transition-all">
+                    bg-green-400 blur-lg opacity-30
+                    group-hover:opacity-60 transition-all">
         </div>
 
-        <!-- AI Icon -->
+        <!-- Icon -->
         <svg xmlns="http://www.w3.org/2000/svg"
-             class="w-8 h-8 text-white relative z-10"
+             class="w-6 h-6 text-white relative z-10"
              fill="none"
              viewBox="0 0 24 24"
              stroke="currentColor"
@@ -57,12 +71,4 @@
     </div>
 
 </a>
-
-
-<form method="POST" action="{{ route('logout') }}">
-    @csrf
-    <button type="submit">Logout</button>
-</form>
-
-
 @endsection
