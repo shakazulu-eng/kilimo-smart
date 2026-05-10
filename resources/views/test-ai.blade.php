@@ -310,7 +310,7 @@
 </nav>
 <!-- Original Scripts -->
 
-<script>
+/*<script>
 async function sendMessage() {
 
     const messageInput = document.getElementById('message');
@@ -474,10 +474,10 @@ document.getElementById('message')
         }
     });
 </script>
+*/
 
 
-
-/*<script>
+<script>
         async function sendMessage() {
             const messageInput = document.getElementById('message');
             const message = messageInput.value.trim();
@@ -495,11 +495,11 @@ document.getElementById('message')
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                const response = await fetch('/chat', {
+                const response = await fetch('/ai-chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({ message })
                 });
@@ -508,7 +508,7 @@ document.getElementById('message')
                 // Add assistant response to UI
                 const botDiv = document.createElement('div');
                 botDiv.className = 'chat-bubble-assistant self-start max-w-[85%] lg:max-w-[70%] px-lg py-md shadow-sm mt-md';
-                botDiv.innerHTML = `<p class="text-body-md">${data.response}</p>`;
+                botDiv.innerHTML = `<p class="text-body-md">${data.reply}</p>`;
                 chatBox.appendChild(botDiv);
                 chatBox.scrollTop = chatBox.scrollHeight;
             } catch (error) {
@@ -522,11 +522,11 @@ document.getElementById('message')
             adviceContainer.classList.remove('hidden');
 
             try {
-                const response = await fetch('/get_advice', {
+                const response = await fetch('/ai-advice', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     }
                 });
                 const data = await response.json();
@@ -547,11 +547,11 @@ document.getElementById('message')
             resultContainer.classList.remove('hidden');
 
             try {
-                const response = await fetch('/get_crop_advice', {
+                const response = await fetch('/crop-advice', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({ crop })
                 });
@@ -569,5 +569,5 @@ document.getElementById('message')
                 sendMessage();
             }
         });
-    </script>*/
+    </script>
 </body></html>
