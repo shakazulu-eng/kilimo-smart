@@ -158,7 +158,7 @@ Route::get('/market', [MarketController::class, 'index'])->middleware('auth');
 
 
 Route::post('/crop-advice', [AIController::class, 'cropAdvice']);
-
+Route::post('/test-ai', [AIController::class, 'store'])->name('test.ai);
 
 // 🔴 USIFUTE
 require __DIR__.'/auth.php';
