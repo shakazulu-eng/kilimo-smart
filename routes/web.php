@@ -128,9 +128,14 @@ Route::get('/student/alerts', [WeatherAlertController::class, 'showAlerts'])
 // =======================
 // AI ROUTES
 // =======================
-Route::get('/ai-test', function () {
+//Route::get('/ai-test', function () {
+  //  return view('test-ai');
+//});
+
+Route::post('/test-ai', function () {
     return view('test-ai');
 });
+
 
 Route::post('/ai-chat', [AIController::class, 'chat']);
 
