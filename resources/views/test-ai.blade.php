@@ -310,7 +310,7 @@
 </nav>
 <!-- Original Scripts -->
 
-<script>
+/*<script>
 async function sendMessage() {
 
     const messageInput = document.getElementById('message');
@@ -473,11 +473,11 @@ document.getElementById('message')
             sendMessage();
         }
     });
-</script>
+</script>*/
 
 
 
-/*<script>
+<script>
         async function sendMessage() {
             const messageInput = document.getElementById('message');
             const message = messageInput.value.trim();
@@ -569,5 +569,5 @@ document.getElementById('message')
                 sendMessage();
             }
         });
-    </script>*/
+    </script>
 </body></html>
