@@ -132,7 +132,7 @@ Route::get('/student/alerts', [WeatherAlertController::class, 'showAlerts'])
   //  return view('test-ai');
 //});
 
-Route::post('/test-ai', function () {
+/*Route::post('/test-ai', function () {
     return view('test-ai');
 });
 
@@ -145,6 +145,35 @@ Route::post('/crop-advice', [AIController::class, 'cropAdvice']);
 
 Route::post('/test-ai', [AIController::class, 'store'])
     ->name('test.ai');
+*/
+
+
+
+// =======================
+// AI ROUTES
+// =======================
+
+// OPEN AI PAGE
+Route::get('/test-ai', function () {
+    return view('test-ai');
+})->middleware('auth');
+
+// CHAT WITH AI
+Route::post('/ai-chat', [AIController::class, 'chat']);
+
+// AUTO WEATHER ADVICE
+Route::post('/ai-advice', [AIController::class, 'autoAdvice']);
+
+// CROP ADVICE
+Route::post('/crop-advice', [AIController::class, 'cropAdvice']);
+
+
+
+
+
+
+
+
 
 
 // =======================
