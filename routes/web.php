@@ -154,9 +154,12 @@ Route::post('/test-ai', [AIController::class, 'store'])
 // =======================
 
 // OPEN AI PAGE
+/*Route::get('/test-ai', function () {
+    return view('test-ai');
+})->middleware('auth');*/
 Route::get('/test-ai', function () {
     return view('test-ai');
-})->middleware('auth');
+})->name('test.ai');
 
 // CHAT WITH AI
 Route::post('/ai-chat', [AIController::class, 'chat']);
