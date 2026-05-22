@@ -31,15 +31,32 @@
 </form>
 
 
-<!-- Small AI Button -->
+<!-- Modern AI Assistant Button -->
 <a href="{{ url('/test-ai') }}"
-   class="fixed bottom-4 right-4 z-50
-          bg-green-600 hover:bg-green-700
-          text-white text-xs font-medium
-          px-3 py-2 rounded-full shadow-md
-          transition">
+   class="fixed bottom-5 right-5 z-50
+          flex items-center gap-2
+          bg-white/90 backdrop-blur-md
+          border border-green-200
+          hover:border-green-400
+          text-green-700 hover:text-green-800
+          px-4 py-2 rounded-full
+          shadow-lg hover:shadow-xl
+          transition-all duration-300
+          hover:-translate-y-1">
 
-    🤖 AI Chat
+    <!-- Small AI Icon -->
+    <div class="w-8 h-8 rounded-full
+                bg-gradient-to-r from-green-500 to-emerald-600
+                flex items-center justify-center
+                shadow-md">
+
+        <span class="text-white text-sm">🤖</span>
+    </div>
+
+    <!-- Text -->
+    <span class="text-sm font-semibold">
+        Chat with AI
+    </span>
 
 </a>
             
