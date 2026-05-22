@@ -30,7 +30,7 @@
     <button type="submit">Logout</button>
 </form>
 
-/*<a href="{{ route('test.ai') }}"
+<a href="{{ route('test.ai') }}"
    class="fixed bottom-5 right-5 z-50 group flex items-center gap-2">
 
     <!-- Text -->
@@ -70,5 +70,5 @@
 
     </div>
 
-</a>*/
+</a>
 @endsection
