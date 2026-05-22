@@ -30,46 +30,35 @@
     <button type="submit">Logout</button>
 </form>
 
-//<a href="{{ route('test.ai') }}"
+
+<!-- AI Assistant Button -->
 <a href="{{ url('/test-ai') }}"
-   class="fixed bottom-5 right-5 z-50 group flex items-center gap-2">
+   class="fixed bottom-5 right-5 z-50 flex items-center gap-2
+          bg-gradient-to-r from-green-600 to-emerald-500
+          hover:from-green-700 hover:to-emerald-600
+          text-white text-sm font-semibold
+          px-4 py-2 rounded-full shadow-lg
+          hover:shadow-2xl hover:scale-105
+          transition-all duration-300">
 
-    <!-- Text -->
-    <span class="bg-green-600 text-white text-sm font-semibold
-                 px-3 py-2 rounded-full shadow-lg
-                 group-hover:bg-green-700 transition-all duration-300">
-        Chat with Assistant
-    </span>
+    <!-- AI Icon -->
+    <svg xmlns="http://www.w3.org/2000/svg"
+         class="w-5 h-5"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor"
+         stroke-width="2">
 
-    <!-- Small AI Icon -->
-    <div class="relative flex items-center justify-center
-                w-12 h-12 rounded-full
-                bg-gradient-to-r from-green-600 to-emerald-500
-                shadow-xl shadow-green-500/30
-                hover:scale-110
-                transition-all duration-300">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M8 10h.01M12 10h.01M16 10h.01M9 16h6
+                 M12 3C7.03 3 3 6.58 3 11c0 2.05.87 3.92
+                 2.29 5.36L4 21l5.09-1.67
+                 c.91.25 1.89.38 2.91.38
+                 4.97 0 9-3.58 9-8s-4.03-8-9-8z"/>
+    </svg>
 
-        <!-- Glow -->
-        <div class="absolute inset-0 rounded-full
-                    bg-green-400 blur-lg opacity-30
-                    group-hover:opacity-60 transition-all">
-        </div>
-
-        <!-- Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="w-6 h-6 text-white relative z-10"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor"
-             stroke-width="2">
-
-            <path stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9.75 3a6.75 6.75 0 00-6.75 6.75c0 1.75.66 3.34 1.75 4.53V21l4.97-2.49c.73.16 1.49.24 2.28.24A6.75 6.75 0 1012 3h-2.25z"/>
-
-        </svg>
-
-    </div>
-
+    <span>AI Assistant</span>
 </a>
+            
 @endsection
