@@ -31,34 +31,16 @@
 </form>
 
 
-<!-- AI Assistant Button -->
+<!-- Small AI Button -->
 <a href="{{ url('/test-ai') }}"
-   class="fixed bottom-5 right-5 z-50 flex items-center gap-2
-          bg-gradient-to-r from-green-600 to-emerald-500
-          hover:from-green-700 hover:to-emerald-600
-          text-white text-sm font-semibold
-          px-4 py-2 rounded-full shadow-lg
-          hover:shadow-2xl hover:scale-105
-          transition-all duration-300">
+   class="fixed bottom-4 right-4 z-50
+          bg-green-600 hover:bg-green-700
+          text-white text-xs font-medium
+          px-3 py-2 rounded-full shadow-md
+          transition">
 
-    <!-- AI Icon -->
-    <svg xmlns="http://www.w3.org/2000/svg"
-         class="w-5 h-5"
-         fill="none"
-         viewBox="0 0 24 24"
-         stroke="currentColor"
-         stroke-width="2">
+    🤖 AI Chat
 
-        <path stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M8 10h.01M12 10h.01M16 10h.01M9 16h6
-                 M12 3C7.03 3 3 6.58 3 11c0 2.05.87 3.92
-                 2.29 5.36L4 21l5.09-1.67
-                 c.91.25 1.89.38 2.91.38
-                 4.97 0 9-3.58 9-8s-4.03-8-9-8z"/>
-    </svg>
-
-    <span>AI Assistant</span>
 </a>
             
 @endsection
